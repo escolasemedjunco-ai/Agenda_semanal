@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Banco de Servidores — SEMED 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--navy:#0F2040;--nvm:#1A3A6B;--nvl:#2155A3;--acc:#3B82F6;--acg:rgba(59,130,246,.15);--grn:#10B981;--red:#EF4444;--sf:#F8F9FB;--sf2:#ECEEF2;--bd:#D8DCE5;--tx:#111827;--txm:#6B7280;--txl:#9CA3AF;--wh:#FFFFFF;--fn:'DM Sans',sans-serif;--mn:'DM Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--sf);font-family:var(--fn);color:var(--tx);font-size:14px}
+/* LOGIN */
+.ls{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:1000}
+.ls.hidden{display:none}
+.lc{background:var(--wh);border-radius:16px;padding:40px 44px;width:380px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.3)}
+.ll{width:52px;height:52px;background:var(--nvm);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.lt{font-size:20px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.ls2{font-size:13px;color:var(--txm);margin-bottom:28px;line-height:1.6}
+.ld{height:1px;background:var(--bd);margin:20px 0}
+.li{font-size:11.5px;color:var(--txl);line-height:1.6}
+.le{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;padding:10px 14px;border-radius:8px;font-size:12.5px;margin-top:14px;display:none}
+.le.show{display:block}
+/* APP */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.app.hidden{display:none}
+/* TOPBAR */
+.tb{height:56px;background:var(--navy);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;z-index:100}
+.tbl{display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;font-size:15px;flex-shrink:0}
+.tbt{color:rgba(255,255,255,.5);font-size:13px;font-weight:400;margin-left:4px}
+.tbsp{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 6px}
+.tbr{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tbbg{background:rgba(59,130,246,.25);color:#93C5FD;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;border:1px solid rgba(59,130,246,.3)}
+.tbu{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.15);transition:background .15s}
+.tbu:hover{background:rgba(255,255,255,.08)}
+.tbav{width:28px;height:28px;border-radius:50%;background:var(--nvl);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.tbav img{width:100%;height:100%;object-fit:cover}
+.tbun{font-size:12px;color:rgba(255,255,255,.75);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lob{font-size:11.5px;color:rgba(255,255,255,.45);background:none;border:none;cursor:pointer;font-family:var(--fn);padding:4px 6px}
+.lob:hover{color:rgba(255,255,255,.75)}
+/* BODY */
+.body{display:flex;flex:1;overflow:hidden}
+/* SIDEBAR */
+.sb{width:220px;background:var(--wh);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0}
+.ss{padding:14px 12px 8px;font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--txl);text-transform:uppercase}
+.si{display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;border-radius:6px;margin:1px 6px;font-size:13px;color:var(--txm);transition:background .12s,color .12s;user-select:none;border:none;background:none;font-family:var(--fn);width:calc(100% - 12px);text-align:left}
+.si:hover{background:var(--sf);color:var(--tx)}
+.si.active{background:var(--acg);color:var(--nvl);font-weight:500}
+.sc{margin-left:auto;font-size:11px;background:var(--sf2);padding:2px 7px;border-radius:20px;font-family:var(--mn)}
+.si.active .sc{background:rgba(33,85,163,.15);color:var(--nvl)}
+.sbbot{margin-top:auto;border-top:1px solid var(--bd);padding:12px}
+.sbi{font-size:11px;color:var(--txl);line-height:1.7;padding:4px}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.tbar{padding:14px 20px 10px;background:var(--wh);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
+.ttl{font-size:16px;font-weight:600;color:var(--navy);margin-right:6px}
+.tsep{width:1px;height:22px;background:var(--bd)}
+.tres{font-size:12px;color:var(--txm);background:var(--sf);padding:3px 10px;border-radius:20px;font-family:var(--mn)}
+.tr{margin-left:auto;display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;font-size:12.5px;font-family:var(--fn);font-weight:500;cursor:pointer;border:1px solid var(--bd);background:var(--wh);color:var(--tx);transition:all .12s;white-space:nowrap}
+.btn:hover{background:var(--sf)}
+.btn-sm{padding:4px 10px;font-size:12px}
+/* READONLY BANNER */
+.rb{background:#FFFBEB;border-bottom:1px solid #FDE68A;padding:7px 20px;font-size:12px;color:#92400E;display:flex;align-items:center;gap:8px;flex-shrink:0}
+/* STATS */
+.stbar{padding:10px 20px;background:var(--wh);border-bottom:1px solid var(--bd);display:flex;gap:24px;align-items:center;flex-shrink:0;overflow-x:auto}
+.st{display:flex;flex-direction:column;gap:1px;flex-shrink:0}
+.stv{font-size:18px;font-weight:600;color:var(--navy);font-family:var(--mn)}
+.stl{font-size:11px;color:var(--txm)}
+.stsp{width:1px;height:32px;background:var(--bd);flex-shrink:0}
+/* FILTERS */
+.fb{padding:10px 20px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-shrink:0}
+.fg{display:flex;align-items:center;gap:6px;background:var(--wh);border:1px solid var(--bd);border-radius:7px;padding:5px 10px;font-size:12.5px}
+.fg label{color:var(--txm);font-weight:500;font-size:11px;white-space:nowrap}
+.fg input,.fg select{border:none;outline:none;background:transparent;font-family:var(--fn);font-size:12.5px;color:var(--tx);min-width:100px;max-width:160px}
+.fg.sg{flex:1;min-width:220px}
+.fg.sg input{min-width:160px;flex:1}
+.cf{font-size:11.5px;color:var(--txm);cursor:pointer;padding:4px 8px;border-radius:5px;background:transparent;border:none;font-family:var(--fn)}
+.cf:hover{background:var(--sf2);color:var(--red)}
+/* TABLE */
+.tw{flex:1;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead{position:sticky;top:0;z-index:10}
+thead tr{background:var(--navy);color:#fff}
+th{padding:10px 12px;text-align:left;font-weight:500;font-size:11px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;cursor:pointer;user-select:none;border-right:1px solid rgba(255,255,255,.08)}
+th:last-child{border-right:none}
+th:hover{background:var(--nvl)}
+th.sa::after{content:' \u2191';opacity:.7;font-size:10px}
+th.sd::after{content:' \u2193';opacity:.7;font-size:10px}
+tbody tr{border-bottom:1px solid var(--bd);transition:background .08s;cursor:pointer}
+tbody tr:hover{background:#EEF3FF}
+td{padding:8px 12px;vertical-align:middle;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+td:first-child{color:var(--txm);font-family:var(--mn);font-size:11px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.ba{background:#D1FAE5;color:#065F46}
+.bi{background:#FEE2E2;color:#991B1B}
+.be{background:#DBEAFE;color:#1E40AF}
+.bc{background:#FEF3C7;color:#92400E}
+.bm{background:#EDE9FE;color:#4C1D95}
+.bd2{background:#E0F2FE;color:#075985}
+.bd3{background:var(--sf2);color:var(--txm)}
+.sp{color:var(--grn);font-weight:600;font-family:var(--mn)}
+.sn{color:var(--red);font-weight:600;font-family:var(--mn)}
+.cpfm{font-family:var(--mn);color:var(--txl);font-size:11px;letter-spacing:.05em}
+.empty{text-align:center;padding:60px 20px;color:var(--txm)}
+.empty p{font-size:15px;font-weight:500;color:var(--tx);margin-bottom:6px}
+/* PANEL */
+.po{position:fixed;inset:0;background:rgba(10,20,40,.45);z-index:200;display:none;align-items:flex-start;justify-content:flex-end}
+.po.open{display:flex}
+.pn{width:520px;max-width:95vw;height:100%;background:var(--wh);overflow-y:auto;display:flex;flex-direction:column;animation:sIn .2s ease}
+@keyframes sIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.ph{padding:20px 24px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;gap:14px;position:sticky;top:0;background:var(--wh);z-index:10}
+.pav{width:46px;height:46px;border-radius:50%;background:var(--nvm);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex-shrink:0}
+.pnm{font-size:16px;font-weight:600;color:var(--navy)}
+.psb{font-size:12px;color:var(--txm);margin-top:3px}
+.pcl{margin-left:auto;cursor:pointer;padding:6px;border-radius:6px;color:var(--txm);background:none;border:none;font-size:20px;line-height:1}
+.pcl:hover{background:var(--sf)}
+.pb{padding:20px 24px;flex:1}
+.psec{margin-bottom:20px}
+.pst{font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--txl);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--sf2)}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pf{display:flex;flex-direction:column;gap:3px}
+.pf label{font-size:11px;color:var(--txm);font-weight:500}
+.pfv{font-size:13px;color:var(--tx);word-break:break-word}
+.pfv.mono{font-family:var(--mn);font-size:12px}
+.pfv.empty{color:var(--txl);font-style:italic}
+.pfv.masked{color:var(--txl);font-family:var(--mn);font-size:12px}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:500;opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<!-- LOGIN -->
+<div class="ls" id="LS">
+  <div class="lc">
+    <div class="ll">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect x="3" y="3" width="9" height="9" rx="2" fill="#1A3A6B" opacity=".9"/>
+        <rect x="16" y="3" width="9" height="9" rx="2" fill="#1A3A6B" opacity=".6"/>
+        <rect x="3" y="16" width="9" height="9" rx="2" fill="#1A3A6B" opacity=".55"/>
+        <rect x="16" y="16" width="9" height="9" rx="2" fill="#1A3A6B" opacity=".3"/>
+      </svg>
+    </div>
+    <div class="lt">Banco de Servidores</div>
+    <div class="ls2">SECRETARIA MUNICIPAL DE EDUCAÇÃO<br>Rede Municipal de Ensino &middot; 2026</div>
+    <div id="g_id_onload"
+         data-client_id="SEU_CLIENT_ID_AQUI.apps.googleusercontent.com"
+         data-callback="handleCredential"
+         data-auto_prompt="false"></div>
+    <div class="g_id_signin"
+         data-type="standard" data-size="large" data-theme="outline"
+         data-text="signin_with" data-shape="rectangular"
+         data-logo_alignment="left" data-width="296"></div>
+    <div class="le" id="LE">Acesso negado. Sua conta não está autorizada. Entre em contato com o RH da SEMED.</div>
+    <div class="ld"></div>
+    <div class="li"><strong>Acesso restrito</strong><br>Apenas contas autorizadas pela SEMED podem entrar.<br>Dados protegidos pela LGPD (Lei 13.709/2018).</div>
+  </div>
+</div>
+<!-- APP -->
+<div class="app hidden" id="APP">
+  <div class="tb">
+    <div class="tbl">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect width="22" height="22" rx="5" fill="#2155A3"/><rect x="4" y="4" width="6" height="6" rx="1.5" fill="white" opacity=".9"/><rect x="12" y="4" width="6" height="6" rx="1.5" fill="white" opacity=".6"/><rect x="4" y="12" width="6" height="6" rx="1.5" fill="white" opacity=".6"/><rect x="12" y="12" width="6" height="6" rx="1.5" fill="white" opacity=".35"/></svg>
+      SEMED <span class="tbt">/ Banco de Servidores 2026</span>
+    </div>
+    <div class="tbsp"></div>
+    <div class="tbr">
+      <span class="tbbg" id="topBadge">—</span>
+      <div class="tbu" onclick="confirmLogout()">
+        <div class="tbav" id="UA">RH</div>
+        <span class="tbun" id="UN">—</span>
+      </div>
+      <button class="lob" onclick="confirmLogout()">Sair</button>
+    </div>
+  </div>
+  <div class="body">
+    <div class="sb">
+      <div class="ss">Cadastros</div>
+      <button class="si active" id="nav-adm" onclick="setTab('adm')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Administrativo <span class="sc" id="cnt-adm">—</span>
+      </button>
+      <button class="si" id="nav-mag" onclick="setTab('mag')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M2 13.5c0-3.31 2.686-6 6-6s6 2.69 6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Magistério <span class="sc" id="cnt-mag">—</span>
+      </button>
+      <div class="ss">Ferramentas</div>
+      <button class="si" onclick="exportCSV()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2.5 11v2a.5.5 0 00.5.5h10a.5.5 0 00.5-.5v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Exportar CSV
+      </button>
+      <button class="si" onclick="showStats()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="9" width="3" height="5" rx=".5" stroke="currentColor" stroke-width="1.3"/><rect x="6.5" y="6" width="3" height="8" rx=".5" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="3" width="3" height="11" rx=".5" stroke="currentColor" stroke-width="1.3"/></svg>
+        Estatísticas
+      </button>
+      <div class="sbbot">
+        <div class="sbi">Rede Municipal de Ensino<br>Teotônio Vilela · AL<br><br>Atualizado: 16/05/2026</div>
+      </div>
+    </div>
+    <div class="main" id="MC"></div>
+  </div>
+</div>
+<!-- DETAIL PANEL -->
+<div class="po" id="PO" onclick="closePanel(event)">
+  <div class="pn">
+    <div class="ph">
+      <div class="pav" id="PAV"></div>
+      <div><div class="pnm" id="PNM"></div><div class="psb" id="PSB"></div></div>
+      <button class="pcl" onclick="closePanelDirect()">&#215;</button>
+    </div>
+    <div class="pb" id="PB"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+
+const DB={"adm_headers":["N\u00ba","MATR\u00cdCULA","NOME COMPLETO","CPF","DATA ADMISS\u00c3O","CATEGORIA RH","SITUA\u00c7\u00c3O","V\u00cdNCULO","CH SEMED (h/sem)","CH CONV. (h/sem)","CH CED. (h/sem)","CH CONTRATUAL TOTAL","ESCOLA LOTA\u00c7\u00c3O 1","ETAPA DE ENSINO LOT. 1","TURNO LOT. 1","CH LOTADA LOT. 1","ESCOLA LOTA\u00c7\u00c3O 2","ETAPA DE ENSINO LOT. 2","TURNO LOT. 2","CH LOTADA LOT. 2","CH LOTADA TOTAL","SALDO CH","CARGO","FUN\u00c7\u00c3O EXERCIDA","ANO CONCURSO","HABILITA\u00c7\u00c3O / FORMA\u00c7\u00c3O","ESPECIALIZA\u00c7\u00c3O / P\u00d3S","OBSERVA\u00c7\u00d5ES GERAIS","CONTATO"],"adm_data":[["1","815","ADELMO JOSE DOS SANTOS","049.468.704-58","02/04/2007","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I6:K6,\"<>\",I6:K6),\"\")","CASINHA FELIZ","","","","","","","","=IFERROR(P6+T6,IFERROR(P6,IFERROR(T6,\"\")))","=IF(OR(L6=\"\",L6=0,U6=\"\"),\"\",L6-U6)","ASSIST.ADM.EDUC","CHEFE DE DISCIPLINA","","ENSINO M\u00c9DIO","","ATESTADO MEDICO DE 2024",""],["2","2790","ALEXSANDRA DA SILVA","097.113.324-77","29/02/2012","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I7:K7,\"<>\",I7:K7),\"\")","ESCOLA DIVINA PASTORA","","","10","","","","10","=IFERROR(P7+T7,IFERROR(P7,IFERROR(T7,\"\")))","=IF(OR(L7=\"\",L7=0,U7=\"\"),\"\",L7-U7)","ASSIST.ADM.EDUC","ASSIST.ADM.EDUC.","","CIENCIAS BIO/ED.AMB.SUST","","",""],["3","833","ANA HELENA PEREIRA DA SILVA","657.685.154-53","15/01/1998","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","30","","","=IFERROR(SUMIF(I8:K8,\"<>\",I8:K8),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P8+T8,IFERROR(P8,IFERROR(T8,\"\")))","=IF(OR(L8=\"\",L8=0,U8=\"\"),\"\",L8-U8)","AUX.SERV.EDUC","READAPTADA","","ENS. FUND. INCOMPLETO","","READAPTADA DESDE 08/09/2023",""],["4","927","DEBORA MARIA DA SILVA","022.756.874.59","20/07/1998","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I9:K9,\"<>\",I9:K9),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P9+T9,IFERROR(P9,IFERROR(T9,\"\")))","=IF(OR(L9=\"\",L9=0,U9=\"\"),\"\",L9-U9)","ASSIST.ADM.EDUC","SEC.ESCOLAR","","PEDAGOGIAN/NEUROPSICOP.","","",""],["5","167","DORALIA MARTA DA SILVA","035.799.684-40","02/04/2007","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I10:K10,\"<>\",I10:K10),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P10+T10,IFERROR(P10,IFERROR(T10,\"\")))","=IF(OR(L10=\"\",L10=0,U10=\"\"),\"\",L10-U10)","ASSIST.ADM.EDUC","ASSIST. ADM.EDUC","","HISTORIA/PSICOP.","","",""],["6","1264","EDUARDO DE JESUS PEREIRA","021.122.024-80","13/05/2002","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I11:K11,\"<>\",I11:K11),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P11+T11,IFERROR(P11,IFERROR(T11,\"\")))","=IF(OR(L11=\"\",L11=0,U11=\"\"),\"\",L11-U11)","ASSIST.ADM.EDUC","CHEFE DE DISCIPLINA","","ENSINO M\u00c9DIO","","",""],["7","955","EDVAM SILVA","368.923.514-68","02/04/2007","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I12:K12,\"<>\",I12:K12),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P12+T12,IFERROR(P12,IFERROR(T12,\"\")))","=IF(OR(L12=\"\",L12=0,U12=\"\"),\"\",L12-U12)","ASSIST.ADM.EDUC","CHEFE DE DISCIPLINA","","ENSINO M\u00c9DIO","","",""],["8","","FAUSTA STARLAYNE DOS SANTOS","014.264.024-73","","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I13:K13,\"<>\",I13:K13),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P13+T13,IFERROR(P13,IFERROR(T13,\"\")))","=IF(OR(L13=\"\",L13=0,U13=\"\"),\"\",L13-U13)","ASSIST.ADM.EDUC","ASSIST.ADM.EDUC.","","","","",""],["9","981","FERNANDO MARQUES RODRIGUES","032.642.014-29","02/04/2007","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I14:K14,\"<>\",I14:K14),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P14+T14,IFERROR(P14,IFERROR(T14,\"\")))","=IF(OR(L14=\"\",L14=0,U14=\"\"),\"\",L14-U14)","ASSIST.ADM.EDUC","CHEFE DE DISCIPLINA","","ENSINO M\u00c9DIO","","",""],["10","","JANIELLY PINHEIRO DOS S.SOUZA","077.944.264-48","27/06/2008","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I15:K15,\"<>\",I15:K15),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P15+T15,IFERROR(P15,IFERROR(T15,\"\")))","=IF(OR(L15=\"\",L15=0,U15=\"\"),\"\",L15-U15)","AUX.SERV.EDUC","CUIDADOR","","PEDAGOGIA","","",""],["11","488","JOAO JOSE  DA SILVA","619.529.824-72","","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I16:K16,\"<>\",I16:K16),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P16+T16,IFERROR(P16,IFERROR(T16,\"\")))","=IF(OR(L16=\"\",L16=0,U16=\"\"),\"\",L16-U16)","AUX.SERV.EDUC","PORTEIRO","","ENS. FUND. INCOMPLETO","","",""],["12","8277","JOAO WILLAMS MORAES DA SILVA","088.753.894-03","01/10/2011","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I17:K17,\"<>\",I17:K17),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P17+T17,IFERROR(P17,IFERROR(T17,\"\")))","=IF(OR(L17=\"\",L17=0,U17=\"\"),\"\",L17-U17)","ASSIST.ADM.EDUC","ASSIST.ADM.EDUC.","","DIREITO/GEST.ED/DIREITO ED.","","",""],["13","2452","JOSE HELDER DOS SANTOS","049.541.984-29","20/09/2011","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I18:K18,\"<>\",I18:K18),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P18+T18,IFERROR(P18,IFERROR(T18,\"\")))","=IF(OR(L18=\"\",L18=0,U18=\"\"),\"\",L18-U18)","ASSIST.ADM.EDUC","ASSIST.ADM.EDUC.","","ANALISE DE SISTEMA","","",""],["14","1079","JOSE MARCIO DOS SANTOS","020.915.224-90","20/07/1998","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I19:K19,\"<>\",I19:K19),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P19+T19,IFERROR(P19,IFERROR(T19,\"\")))","=IF(OR(L19=\"\",L19=0,U19=\"\"),\"\",L19-U19)","ASSIST.ADM.EDUC","ASSIST.ADM.EDUC.","","MAGISTERIO","","",""],["15","1043","MARIA  AMELIA DA SILVA PEREIRA","080.010.788-84","20/07/1998","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I20:K20,\"<>\",I20:K20),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P20+T20,IFERROR(P20,IFERROR(T20,\"\")))","=IF(OR(L20=\"\",L20=0,U20=\"\"),\"\",L20-U20)","ASSIST.ADM.EDUC","ASSIST.ADM.EDUC.","","MAGISTERIO","","",""],["16","1045","MARIA ANA DOS SANTOS","623.703.674-15","13/05/2002","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","30","","","=IFERROR(SUMIF(I21:K21,\"<>\",I21:K21),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P21+T21,IFERROR(P21,IFERROR(T21,\"\")))","=IF(OR(L21=\"\",L21=0,U21=\"\"),\"\",L21-U21)","AUX.SERV.EDUC","MERENDEIRA","","MAGISTERIO","","",""],["17","902","MARIA HELIANE CHAGAS DA SILVA","787.447.684-00","20/07/1998","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I22:K22,\"<>\",I22:K22),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P22+T22,IFERROR(P22,IFERROR(T22,\"\")))","=IF(OR(L22=\"\",L22=0,U22=\"\"),\"\",L22-U22)","ASSIST.ADM.EDUC","ASSIST.ADM.EDUC.","","ENSINO M\u00c9DIO","","",""],["18","970","PATRICIA TAVARES DOS SANTOS","042.246.844-46","06/05/2002","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","30","","","=IFERROR(SUMIF(I23:K23,\"<>\",I23:K23),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P23+T23,IFERROR(P23,IFERROR(T23,\"\")))","=IF(OR(L23=\"\",L23=0,U23=\"\"),\"\",L23-U23)","AUX.SERV.EDUC","AUSEG","","ENS. FUND. INCOMPLETO","","",""],["19","974","PAULO ANTONIO DOS SANTOS","025.786.854-28","","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I24:K24,\"<>\",I24:K24),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P24+T24,IFERROR(P24,IFERROR(T24,\"\")))","=IF(OR(L24=\"\",L24=0,U24=\"\"),\"\",L24-U24)","VIGILANTE ESCOLAR","PORTEIRO","","ENSINO FUNDAMENTAL","","LIC.MEDICA",""],["20","996","ROSINEIDE LIMA DOS SANTOS SILVA","033.050.724-90","02/02/2026","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","30","","","=IFERROR(SUMIF(I25:K25,\"<>\",I25:K25),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P25+T25,IFERROR(P25,IFERROR(T25,\"\")))","=IF(OR(L25=\"\",L25=0,U25=\"\"),\"\",L25-U25)","AUX.SERV.EDUC","MERENDEIRA","","ENS. FUND. INCOMPLETO","","",""],["21","794","TEREZA LUCIA DA SILVA","587.260.474-20","20/07/1998","APOIO ADMINISTRATIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I26:K26,\"<>\",I26:K26),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P26+T26,IFERROR(P26,IFERROR(T26,\"\")))","=IF(OR(L26=\"\",L26=0,U26=\"\"),\"\",L26-U26)","ASSIST.ADM.EDUC","ASSIST.ADM.EDUC.","","MAGISTERIO","","FALTA APOSENTADORIA",""],["22","17","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","20/07/1998","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I27:K27,\"<>\",I27:K27),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P27+T27,IFERROR(P27,IFERROR(T27,\"\")))","=IF(OR(L27=\"\",L27=0,U27=\"\"),\"\",L27-U27)","PROFESSOR","BIBLIOTECA","","CIENCIAS BIOLOGICA","","",""],["23","30","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","02/04/2007","QUADRO DIRETIVO","ATIVO","EFETIVO","20","","","=IFERROR(SUMIF(I28:K28,\"<>\",I28:K28),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P28+T28,IFERROR(P28,IFERROR(T28,\"\")))","=IF(OR(L28=\"\",L28=0,U28=\"\"),\"\",L28-U28)","PROFESSOR","PROFESSOR","","MATEMATICA/EDUCA\u00c7\u00c3O MATEM\u00c1TICA","","",""],["24","33","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","20/07/1998","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I29:K29,\"<>\",I29:K29),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P29+T29,IFERROR(P29,IFERROR(T29,\"\")))","=IF(OR(L29=\"\",L29=0,U29=\"\"),\"\",L29-U29)","PROFESSOR","BIBLIOTECA","","LETRAS","","",""],["25","50","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","02/04/2007","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I30:K30,\"<>\",I30:K30),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P30+T30,IFERROR(P30,IFERROR(T30,\"\")))","=IF(OR(L30=\"\",L30=0,U30=\"\"),\"\",L30-U30)","PROFESSOR","BIBLIOTECA","","HISTORIA/MET.ENS.LINGUAGEM","","",""],["26","66","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","01/02/2008","QUADRO DIRETIVO","ATIVO","EFETIVO","20","","","=IFERROR(SUMIF(I31:K31,\"<>\",I31:K31),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P31+T31,IFERROR(P31,IFERROR(T31,\"\")))","=IF(OR(L31=\"\",L31=0,U31=\"\"),\"\",L31-U31)","PROFESSOR","PERMUTA","","","","",""],["27","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-01","19/02/2026","QUADRO DIRETIVO","ATIVO","CONTRATO","25","","","=IFERROR(SUMIF(I32:K32,\"<>\",I32:K32),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P32+T32,IFERROR(P32,IFERROR(T32,\"\")))","=IF(OR(L32=\"\",L32=0,U32=\"\"),\"\",L32-U32)","PROFESSOR","PROFESSOR/AEE","","PEDAGOGIA/ESP.","","",""],["28","74","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-02","20/07/1998","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I33:K33,\"<>\",I33:K33),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P33+T33,IFERROR(P33,IFERROR(T33,\"\")))","=IF(OR(L33=\"\",L33=0,U33=\"\"),\"\",L33-U33)","PROFESSOR","AFASTADO","","","","",""],["29","2466","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-03","19/09/2011","QUADRO DIRETIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I34:K34,\"<>\",I34:K34),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P34+T34,IFERROR(P34,IFERROR(T34,\"\")))","=IF(OR(L34=\"\",L34=0,U34=\"\"),\"\",L34-U34)","PROFESSOR","VICE DIRETOR","","","","",""],["30","186","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-04","15/05/2007","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I35:K35,\"<>\",I35:K35),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P35+T35,IFERROR(P35,IFERROR(T35,\"\")))","=IF(OR(L35=\"\",L35=0,U35=\"\"),\"\",L35-U35)","PROFESSOR","PERMUTA","","PEDAGOGIA/ED.INCLUSIVA","","",""],["31","57","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-05","27/06/2008","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I36:K36,\"<>\",I36:K36),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P36+T36,IFERROR(P36,IFERROR(T36,\"\")))","=IF(OR(L36=\"\",L36=0,U36=\"\"),\"\",L36-U36)","PROFESSOR","BIBLIOTECA","","ENS. FUND. INCOMPLETO","","",""],["32","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-06","13/01/2026","QUADRO DIRETIVO","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I37:K37,\"<>\",I37:K37),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P37+T37,IFERROR(P37,IFERROR(T37,\"\")))","=IF(OR(L37=\"\",L37=0,U37=\"\"),\"\",L37-U37)","PROFESSOR","COORDENA\u00c7\u00c3O PEDAGOGICA","","EST.SOCIAIS","","",""],["33","89","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-07","20/07/1998","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I38:K38,\"<>\",I38:K38),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P38+T38,IFERROR(P38,IFERROR(T38,\"\")))","=IF(OR(L38=\"\",L38=0,U38=\"\"),\"\",L38-U38)","PROFESSOR","LAB..INF","","HISTORIA/PSICOP.","","",""],["34","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-08","13/01/2026","QUADRO DIRETIVO","ATIVO","CONTRATO","20","","","=IFERROR(SUMIF(I39:K39,\"<>\",I39:K39),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P39+T39,IFERROR(P39,IFERROR(T39,\"\")))","=IF(OR(L39=\"\",L39=0,U39=\"\"),\"\",L39-U39)","PROFESSOR","COORDENA\u00c7\u00c3O +ARTICULA\u00c7\u00c3O","","LETRAS","","",""],["35","175","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-09","20/07/1998","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I40:K40,\"<>\",I40:K40),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P40+T40,IFERROR(P40,IFERROR(T40,\"\")))","=IF(OR(L40=\"\",L40=0,U40=\"\"),\"\",L40-U40)","PROFESSOR","BIBLIOTECA","","PEDAGOGIA/ GESTAO ESCOLAR","","",""],["36","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-10","13/01/2026","QUADRO DIRETIVO","ATIVO","CONTRATO","30","","","=IFERROR(SUMIF(I41:K41,\"<>\",I41:K41),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P41+T41,IFERROR(P41,IFERROR(T41,\"\")))","=IF(OR(L41=\"\",L41=0,U41=\"\"),\"\",L41-U41)","PROFESSOR","COORDENA\u00c7\u00c3O EJA","","MATEMATICA/MET.ENS.MAT","","",""],["37","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-11","13/01/2026","QUADRO DIRETIVO","ATIVO","CONTRATO","","","","=IFERROR(SUMIF(I42:K42,\"<>\",I42:K42),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P42+T42,IFERROR(P42,IFERROR(T42,\"\")))","=IF(OR(L42=\"\",L42=0,U42=\"\"),\"\",L42-U42)","PROFESSOR","COORDENA\u00c7\u00c3O","","MAGISTERIO","","",""],["38","95","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-12","20/07/1998","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I43:K43,\"<>\",I43:K43),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P43+T43,IFERROR(P43,IFERROR(T43,\"\")))","=IF(OR(L43=\"\",L43=0,U43=\"\"),\"\",L43-U43)","PROFESSOR","LAB..INF","","CIENCIAS BIO/BIOQ. MOLECULAR","","",""],["39","25","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-13","13/05/2002","QUADRO DIRETIVO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I44:K44,\"<>\",I44:K44),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P44+T44,IFERROR(P44,IFERROR(T44,\"\")))","=IF(OR(L44=\"\",L44=0,U44=\"\"),\"\",L44-U44)","PROFESSOR","AFASTADO","","LETRAS/GESTAO ESCOALR","","",""],["40","1109","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-14","13/05/2002","QUADRO DIRETIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I45:K45,\"<>\",I45:K45),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P45+T45,IFERROR(P45,IFERROR(T45,\"\")))","=IF(OR(L45=\"\",L45=0,U45=\"\"),\"\",L45-U45)","PROFESSOR","COORDENA\u00c7\u00c3O PEDAGOGICA","","MATEMATICA","","",""],["41","1109","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-15","13/05/2002","QUADRO DIRETIVO","ATIVO","EFETIVO","","","","=IFERROR(SUMIF(I46:K46,\"<>\",I46:K46),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P46+T46,IFERROR(P46,IFERROR(T46,\"\")))","=IF(OR(L46=\"\",L46=0,U46=\"\"),\"\",L46-U46)","PROFESSOR","","","GEOGRAFIA","","",""],["42","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-16","04/02/2026","QUADRO DIRETIVO","ATIVO","CONTRATO","25","","","=IFERROR(SUMIF(I47:K47,\"<>\",I47:K47),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P47+T47,IFERROR(P47,IFERROR(T47,\"\")))","=IF(OR(L47=\"\",L47=0,U47=\"\"),\"\",L47-U47)","PROFESSOR","PROFESSOR/AEE","","","","",""],["43","262","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-17","20/07/1998","QUADRO DIRETIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I48:K48,\"<>\",I48:K48),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P48+T48,IFERROR(P48,IFERROR(T48,\"\")))","=IF(OR(L48=\"\",L48=0,U48=\"\"),\"\",L48-U48)","PROFESSOR","DIRE\u00c7AO","","LETRAS","","",""],["44","280","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-18","20/07/1998","QUADRO DIRETIVO","ATIVO","EFETIVO","40","","","=IFERROR(SUMIF(I49:K49,\"<>\",I49:K49),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P49+T49,IFERROR(P49,IFERROR(T49,\"\")))","=IF(OR(L49=\"\",L49=0,U49=\"\"),\"\",L49-U49)","PROFESSOR","BIBLIOTECA","","HISTORIA","","",""],["45","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","02/03/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I50:K50,\"<>\",I50:K50),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P50+T50,IFERROR(P50,IFERROR(T50,\"\")))","=IF(OR(L50=\"\",L50=0,U50=\"\"),\"\",L50-U50)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["46","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","19/02/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I51:K51,\"<>\",I51:K51),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P51+T51,IFERROR(P51,IFERROR(T51,\"\")))","=IF(OR(L51=\"\",L51=0,U51=\"\"),\"\",L51-U51)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["47","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","19/02/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I52:K52,\"<>\",I52:K52),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P52+T52,IFERROR(P52,IFERROR(T52,\"\")))","=IF(OR(L52=\"\",L52=0,U52=\"\"),\"\",L52-U52)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["48","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","09/03/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I53:K53,\"<>\",I53:K53),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P53+T53,IFERROR(P53,IFERROR(T53,\"\")))","=IF(OR(L53=\"\",L53=0,U53=\"\"),\"\",L53-U53)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["49","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I54:K54,\"<>\",I54:K54),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P54+T54,IFERROR(P54,IFERROR(T54,\"\")))","=IF(OR(L54=\"\",L54=0,U54=\"\"),\"\",L54-U54)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","LICENCA MAT",""],["50","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","19/02/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I55:K55,\"<>\",I55:K55),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P55+T55,IFERROR(P55,IFERROR(T55,\"\")))","=IF(OR(L55=\"\",L55=0,U55=\"\"),\"\",L55-U55)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["51","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","19/02/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I56:K56,\"<>\",I56:K56),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P56+T56,IFERROR(P56,IFERROR(T56,\"\")))","=IF(OR(L56=\"\",L56=0,U56=\"\"),\"\",L56-U56)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["52","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","04/03/2026","PROF. APOIO AEE","ATIVO","CONTRATO","41","","","=IFERROR(SUMIF(I57:K57,\"<>\",I57:K57),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P57+T57,IFERROR(P57,IFERROR(T57,\"\")))","=IF(OR(L57=\"\",L57=0,U57=\"\"),\"\",L57-U57)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["53","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","09/03/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I58:K58,\"<>\",I58:K58),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P58+T58,IFERROR(P58,IFERROR(T58,\"\")))","=IF(OR(L58=\"\",L58=0,U58=\"\"),\"\",L58-U58)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["54","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","16/03/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I59:K59,\"<>\",I59:K59),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P59+T59,IFERROR(P59,IFERROR(T59,\"\")))","=IF(OR(L59=\"\",L59=0,U59=\"\"),\"\",L59-U59)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["55","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","20/03/2026","PROF. APOIO AEE","ATIVO","CONTRATO","41","","","=IFERROR(SUMIF(I60:K60,\"<>\",I60:K60),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P60+T60,IFERROR(P60,IFERROR(T60,\"\")))","=IF(OR(L60=\"\",L60=0,U60=\"\"),\"\",L60-U60)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["56","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","16/03/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I61:K61,\"<>\",I61:K61),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P61+T61,IFERROR(P61,IFERROR(T61,\"\")))","=IF(OR(L61=\"\",L61=0,U61=\"\"),\"\",L61-U61)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["57","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","16/03/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I62:K62,\"<>\",I62:K62),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P62+T62,IFERROR(P62,IFERROR(T62,\"\")))","=IF(OR(L62=\"\",L62=0,U62=\"\"),\"\",L62-U62)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["58","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","19/02/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I63:K63,\"<>\",I63:K63),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P63+T63,IFERROR(P63,IFERROR(T63,\"\")))","=IF(OR(L63=\"\",L63=0,U63=\"\"),\"\",L63-U63)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["59","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","23/02/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I64:K64,\"<>\",I64:K64),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P64+T64,IFERROR(P64,IFERROR(T64,\"\")))","=IF(OR(L64=\"\",L64=0,U64=\"\"),\"\",L64-U64)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["60","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","19/02/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I65:K65,\"<>\",I65:K65),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P65+T65,IFERROR(P65,IFERROR(T65,\"\")))","=IF(OR(L65=\"\",L65=0,U65=\"\"),\"\",L65-U65)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""],["61","","[VAGA \u2014 SEM IDENTIFICA\u00c7\u00c3O]","000.000.000-00","10/03/2026","PROF. APOIO AEE","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I66:K66,\"<>\",I66:K66),\"\")","ESCOLA DIVINA PASTORA","","","","","","","","=IFERROR(P66+T66,IFERROR(P66,IFERROR(T66,\"\")))","=IF(OR(L66=\"\",L66=0,U66=\"\"),\"\",L66-U66)","PROF.DE APOIO ESCOLAR/AEE","CUIDADOR","","ENSINO M\u00c9DIO","","",""]],"mag_headers":["N\u00ba","MATR\u00cdCULA","NOME COMPLETO","CPF","DATA ADMISS\u00c3O","CATEGORIA RH","SITUA\u00c7\u00c3O","V\u00cdNCULO","CH SEMED (h/sem)","CH CONV. (h/sem)","CH CED. (h/sem)","CH CONTRATUAL TOTAL","ESCOLA LOTA\u00c7\u00c3O 1","ETAPA DE ENSINO LOT. 1","S\u00c9RIE LOT. 1","TURNO LOT. 1","CH SALA LOT. 1","CH PLANEJ. LOT. 1","CH TOTAL LOT. 1","TURMAS LOT. 1","N\u00ba TURMAS 1","DISCIPLINA MINISTRADA LOT. 1","ESCOLA LOTA\u00c7\u00c3O 2","ETAPA DE ENSINO LOT. 2","TURNO LOT. 2","CH SALA LOT. 2","CH PLANEJ. LOT. 2","CH TOTAL LOT. 2","TURMAS LOT. 2","N\u00ba TURMAS 2","DISCIPLINA MINISTRADA LOT. 2","CH LOTADA TOTAL","SALDO CH","CARGO","FUN\u00c7\u00c3O EXERCIDA","ANO CONCURSO","N\u00cdVEL FUNCIONAL","DISC. CONCURSO","HABILITA\u00c7\u00c3O / FORMA\u00c7\u00c3O","ESPECIALIZA\u00c7\u00c3O / P\u00d3S","DISCIPLINA MINISTRADA (GERAL)","OBSERVA\u00c7\u00d5ES GERAIS","CONTATO"],"mag_data":[["1","","THAIANE MISIAN DA CONCEI\u00c7\u00c3O SILVA","044.645.925-97","02/02/2026","MAGIST\u00c9RIO","ATIVO","CONTRATO","40","","","=IFERROR(SUMIF(I6:K6,\"<>\",I6:K6),\"\")","ESCOLA SANTO ANT\u00d4NIO","ENSINO FUNDAMENTAL","ANOS INICIAIS","M/V","13","7","=IFERROR(SUMIF(Q6:R6,\"<>\",Q6:R6),\"\")","6\u00baA,B,C,D","04 TURMAS","LING.PORTUGUESA","ESCOLA MUNICIPAL DE EDUCA\u00c7\u00c3O B\u00c1SICA M\u00d4NICA ROSA DE JESUS","","M/V","10","4","=IFERROR(SUMIF(Z6:AA6,\"<>\",Z6:AA6),\"\")","","","INGL\u00caS","=IFERROR(S6+AB6,IFERROR(S6,IFERROR(AB6,\"\")))","=IF(OR(L6=\"\",L6=0,AF6=\"\"),\"\",L6-AF6)","PROFESSOR","PROFESSOR","","","","LETRAS","","LING.PORTUGUESA","",""],["2","303","KARINA PINHEIRO RODRIGUES","030.516.594-10","20/07/1998","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I7:K7,\"<>\",I7:K7),\"\")","ESCOLA MONICA ROSA","ENSINO FUNDAMENTAL","EJA","","16","9","=IFERROR(SUMIF(Q7:R7,\"<>\",Q7:R7),\"\")","7\u00baA,B,C,D","04TURMAS","LING.PORTUGUESA","","","","","","=IFERROR(SUMIF(Z7:AA7,\"<>\",Z7:AA7),\"\")","","","","=IFERROR(S7+AB7,IFERROR(S7,IFERROR(AB7,\"\")))","=IF(OR(L7=\"\",L7=0,AF7=\"\"),\"\",L7-AF7)","PROFESSOR","PROFESSOR","","III-I","","LETRAS/PSICOP.","","LING.PORTUGUESA","",""],["3","217","SILVANIO DOS SANTOS","018.348.314-66","06/05/2002","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I8:K8,\"<>\",I8:K8),\"\")","ESCOLA MARIA DO CARMO COSTA","ENSINO FUNDAMENTAL","ANOS INICIAIS","","16","9","=IFERROR(SUMIF(Q8:R8,\"<>\",Q8:R8),\"\")","8\u00baA,B,C,D","04TURMAS","LING.PORTUGUESA","","","","","","=IFERROR(SUMIF(Z8:AA8,\"<>\",Z8:AA8),\"\")","","","","=IFERROR(S8+AB8,IFERROR(S8,IFERROR(AB8,\"\")))","=IF(OR(L8=\"\",L8=0,AF8=\"\"),\"\",L8-AF8)","PROFESSOR","PROFESSOR","","III-H","","LETRAS","","LING.PORTUGUESA","",""],["4","","CRISTIANO BORGES DA SILVA","137.976.804-26","02/02/2026","MAGIST\u00c9RIO","ATIVO","CONTRATO","40","","","25","CENTRO CASINHA FELIZ","EDUCA\u00c7\u00c3O INFANTIL","CRECHE","","16","9","=IFERROR(SUMIF(Q9:R9,\"<>\",Q9:R9),\"\")","6\u00ba A,B/8\u00baA,B,C,D,E/7\u00baE,F/8\u00baF,G","11TURMAS","LING.PORTUGUESA/LETRAMENTO","","","","","","=IFERROR(SUMIF(Z9:AA9,\"<>\",Z9:AA9),\"\")","","","","=IFERROR(S9+AB9,IFERROR(S9,IFERROR(AB9,\"\")))","=IF(OR(L9=\"\",L9=0,AF9=\"\"),\"\",L9-AF9)","PROFESSOR","PROFESSOR","","","","","","LING.PORTUGUESA/LETRAMENTO","",""],["5","","BEATRIZ GON\u00c7ALVES DA SILVA","130.878.954-82","02/02/2026","MAGIST\u00c9RIO","ATIVO","CONTRATO","25","","","40","ESCOLA DIVINA PASTORA","ENSINO FUNDAMENTAL","ANOS FINAIS","","13","7","=IFERROR(SUMIF(Q10:R10,\"<>\",Q10:R10),\"\")","9\u00baA,B,C,D/EJA VESP","05 TURMA","LING.PORTUGUESA","ESCOLA MONICA ROSA","ENSINO FUNDAMENTAL","V","8","6","=IFERROR(SUMIF(Z10:AA10,\"<>\",Z10:AA10),\"\")","","","","=IFERROR(S10+AB10,IFERROR(S10,IFERROR(AB10,\"\")))","=IF(OR(L10=\"\",L10=0,AF10=\"\"),\"\",L10-AF10)","PROFESSOR","PROFESSOR","","","","LETRAS","","LING.PORTUGUESA","",""],["6","20","EPAMINONDAS JOSE DA SILVA","009.230.564-40","06/05/2002","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I11:K11,\"<>\",I11:K11),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q11:R11,\"<>\",Q11:R11),\"\")","6\u00baA,B,C,D/7\u00baA,B,C,D","08 TURMAS","INGLES","","","","","","=IFERROR(SUMIF(Z11:AA11,\"<>\",Z11:AA11),\"\")","","","","=IFERROR(S11+AB11,IFERROR(S11,IFERROR(AB11,\"\")))","=IF(OR(L11=\"\",L11=0,AF11=\"\"),\"\",L11-AF11)","PROFESSOR","PROFESSOR","","L III-H","","LETRAS/INGLES","","INGLES","",""],["7","182","JOSE SANTANA DOS SANTOS","787.119.544-68","01/02/2008","MAGIST\u00c9RIO","INATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I12:K12,\"<>\",I12:K12),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q12:R12,\"<>\",Q12:R12),\"\")","9\u00baA,B,C,D,E,F/7\u00baE,F","06 TURMAS","INGLES","","","","","","=IFERROR(SUMIF(Z12:AA12,\"<>\",Z12:AA12),\"\")","","","","=IFERROR(S12+AB12,IFERROR(S12,IFERROR(AB12,\"\")))","=IF(OR(L12=\"\",L12=0,AF12=\"\"),\"\",L12-AF12)","PROFESSOR","PROFESSOR","","III-F","","LETRAS/INGLES","","INGLES","",""],["8","","EDINALVA DA SILVA MADEIRO","046.425.314-40","02/02/2026","MAGIST\u00c9RIO","ATIVO","CONTRATO","25","","","=IFERROR(SUMIF(I13:K13,\"<>\",I13:K13),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q13:R13,\"<>\",Q13:R13),\"\")","8\u00baA,B,C,D,E,F,G /6\u00baE,F/EJA - VESP","10 TURMAS","INGLES","","","","","","=IFERROR(SUMIF(Z13:AA13,\"<>\",Z13:AA13),\"\")","","","","=IFERROR(S13+AB13,IFERROR(S13,IFERROR(AB13,\"\")))","=IF(OR(L13=\"\",L13=0,AF13=\"\"),\"\",L13-AF13)","PROFESSOR","PROFESSOR","","","","LETRAS/INGLES","","INGLES","",""],["9","68","GILMARY  DOS SANTOS ALEXANDRE","871.316.504-63","13/05/2002","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I14:K14,\"<>\",I14:K14),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q14:R14,\"<>\",Q14:R14),\"\")","8\u00baF,G/9\u00baE,F","04TURMAS","MATEMATICA","","","","","","=IFERROR(SUMIF(Z14:AA14,\"<>\",Z14:AA14),\"\")","","","","=IFERROR(S14+AB14,IFERROR(S14,IFERROR(AB14,\"\")))","=IF(OR(L14=\"\",L14=0,AF14=\"\"),\"\",L14-AF14)","PROFESSOR","PROFESSOR","","III-H","","MATEMATICA/MET.ENS.MAT.","","MATEMATICA","",""],["10","199","SERGIO GOMES DA SILVA","814.793.954-04","06/05/2002","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I15:K15,\"<>\",I15:K15),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q15:R15,\"<>\",Q15:R15),\"\")","9\u00baA,B,C,D","04TURMAS","MATEMATICA","","","","","","=IFERROR(SUMIF(Z15:AA15,\"<>\",Z15:AA15),\"\")","","","","=IFERROR(S15+AB15,IFERROR(S15,IFERROR(AB15,\"\")))","=IF(OR(L15=\"\",L15=0,AF15=\"\"),\"\",L15-AF15)","PROFESSOR","PROFESSOR","","III-H","","MATEMATICA","","MATEMATICA","",""],["11","","ANA MARIANE DA SILVA BRAZ","122.479.784-10","02/02/2026","MAGIST\u00c9RIO","ATIVO","CONTRATO","20","","","=IFERROR(SUMIF(I16:K16,\"<>\",I16:K16),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q16:R16,\"<>\",Q16:R16),\"\")","6\u00baA,B,C,D","04TURMAS","MATEMATICA","","","","","","=IFERROR(SUMIF(Z16:AA16,\"<>\",Z16:AA16),\"\")","","","","=IFERROR(S16+AB16,IFERROR(S16,IFERROR(AB16,\"\")))","=IF(OR(L16=\"\",L16=0,AF16=\"\"),\"\",L16-AF16)","PROFESSOR","PROFESSOR","","","","MATEMATICA","","MATEMATICA","",""],["12","","ALINE DA SILVA SANTOS","115.994.634-58","02/02/2026","MAGIST\u00c9RIO","ATIVO","CONTRATO","20","","","=IFERROR(SUMIF(I17:K17,\"<>\",I17:K17),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q17:R17,\"<>\",Q17:R17),\"\")","8\u00baA,B,C,D","04TURMAS","MATEMATICA","","","","","","=IFERROR(SUMIF(Z17:AA17,\"<>\",Z17:AA17),\"\")","","","","=IFERROR(S17+AB17,IFERROR(S17,IFERROR(AB17,\"\")))","=IF(OR(L17=\"\",L17=0,AF17=\"\"),\"\",L17-AF17)","PROFESSOR","PROFESSOR","","","","MATEMATICA/MET.ENS.MAT.","","MATEMATICA","",""],["13","","MAYARA  LUZIA DOS SANTOS SILVA","118.637.194-31","02/02/2026","MAGIST\u00c9RIO","ATIVO","CONTRATO","25","","","=IFERROR(SUMIF(I18:K18,\"<>\",I18:K18),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q18:R18,\"<>\",Q18:R18),\"\")","6\u00baA.B,C,D/7\u00baC,D","06TURMAS","LETRAMENTO MATEMATICA","","","","","","=IFERROR(SUMIF(Z18:AA18,\"<>\",Z18:AA18),\"\")","","","","=IFERROR(S18+AB18,IFERROR(S18,IFERROR(AB18,\"\")))","=IF(OR(L18=\"\",L18=0,AF18=\"\"),\"\",L18-AF18)","PROFESSOR","PROFESSOR","","","","MATEMATICA","","LETRAMENTO MATEMATICA","",""],["14","160","CRISTOVAO LUCIO DOS SANTOS","022.712.834-69","20/07/1998","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I19:K19,\"<>\",I19:K19),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q19:R19,\"<>\",Q19:R19),\"\")","6\u00baA,B,C,D/6\u00baE","05 TURMAS","CIENCIAS","","","","","","=IFERROR(SUMIF(Z19:AA19,\"<>\",Z19:AA19),\"\")","","","","=IFERROR(S19+AB19,IFERROR(S19,IFERROR(AB19,\"\")))","=IF(OR(L19=\"\",L19=0,AF19=\"\"),\"\",L19-AF19)","PROFESSOR","PROFESSOR","","III-I","","CIENCIAS BIOLOGICA","","CIENCIAS","",""],["15","123","JOANA  PAULINE C. MELO  NERIS","046.245.984-58","","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I20:K20,\"<>\",I20:K20),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q20:R20,\"<>\",Q20:R20),\"\")","7\u00baA,B,C/8\u00baD.E","05 TURMAS","CIENCIAS","","","","","","=IFERROR(SUMIF(Z20:AA20,\"<>\",Z20:AA20),\"\")","","","","=IFERROR(S20+AB20,IFERROR(S20,IFERROR(AB20,\"\")))","=IF(OR(L20=\"\",L20=0,AF20=\"\"),\"\",L20-AF20)","PROFESSOR","PROFESSOR","","III-F","","CIENCIAS BIOLOGICA","","CIENCIAS","",""],["16","75","GIRLEIDE  CAVALCANTE DA SILVA CEDRIM","033.766.914-79","20/07/1998","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I21:K21,\"<>\",I21:K21),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q21:R21,\"<>\",Q21:R21),\"\")","7\u00baD/9\u00baA,B,C,D","05 TURMAS","CIENCIAS","","","","","","=IFERROR(SUMIF(Z21:AA21,\"<>\",Z21:AA21),\"\")","","","","=IFERROR(S21+AB21,IFERROR(S21,IFERROR(AB21,\"\")))","=IF(OR(L21=\"\",L21=0,AF21=\"\"),\"\",L21-AF21)","PROFESSOR","PROFESSOR","","III-I","","QUIMICA","","CIENCIAS","",""],["17","147","JOSE DANIEL DA SILVA","027.168.644-89","06/05/2002","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I22:K22,\"<>\",I22:K22),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q22:R22,\"<>\",Q22:R22),\"\")","6\u00baE,/7\u00baE,F/8\u00ba F,G","05 TURMAS","CIENCIAS","","","","","","=IFERROR(SUMIF(Z22:AA22,\"<>\",Z22:AA22),\"\")","","","","=IFERROR(S22+AB22,IFERROR(S22,IFERROR(AB22,\"\")))","=IF(OR(L22=\"\",L22=0,AF22=\"\"),\"\",L22-AF22)","PROFESSOR","PROFESSOR","","FALTA","","CIENCIAS BIOLOGICA","","CIENCIAS","",""],["18","","NEUSA LOISE NUNES ALBUQUERQUE","110.445.374-69","02/02/2026","MAGIST\u00c9RIO","ATIVO","CONTRATO","20","","","=IFERROR(SUMIF(I23:K23,\"<>\",I23:K23),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q23:R23,\"<>\",Q23:R23),\"\")","8\u00baA,B,C,/9\u00baE,F","05TURMAS","CIENCIAS","","","","","","=IFERROR(SUMIF(Z23:AA23,\"<>\",Z23:AA23),\"\")","","","","=IFERROR(S23+AB23,IFERROR(S23,IFERROR(AB23,\"\")))","=IF(OR(L23=\"\",L23=0,AF23=\"\"),\"\",L23-AF23)","PROFESSOR","PROFESSOR","","","","CIENCIAS BIOLOGICA","","CIENCIAS","",""],["19","","MELISSA MARILIA RIBEIRO","","02/02/2026","MAGIST\u00c9RIO","ATIVO","","","","","=IFERROR(SUMIF(I24:K24,\"<>\",I24:K24),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q24:R24,\"<>\",Q24:R24),\"\")","EJA-VESP","01 TURMA","CIENCIAS","","","","","","=IFERROR(SUMIF(Z24:AA24,\"<>\",Z24:AA24),\"\")","","","","=IFERROR(S24+AB24,IFERROR(S24,IFERROR(AB24,\"\")))","=IF(OR(L24=\"\",L24=0,AF24=\"\"),\"\",L24-AF24)","","","","","","","","CIENCIAS","COMPLETA NO MONICA ROS",""],["20","85","NADJA LUCIA DOS SANTOS  BECHER","814.829.304-04","06/05/2002","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I25:K25,\"<>\",I25:K25),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q25:R25,\"<>\",Q25:R25),\"\")","7\u00baA,B/9\u00baA,B,C,D","06 TURMAS","HISTORIA","","","","","","=IFERROR(SUMIF(Z25:AA25,\"<>\",Z25:AA25),\"\")","","","","=IFERROR(S25+AB25,IFERROR(S25,IFERROR(AB25,\"\")))","=IF(OR(L25=\"\",L25=0,AF25=\"\"),\"\",L25-AF25)","PROFESSOR","PROFESSOR","","FALTA","","HISTORIA/Met.Hist e Geog","","HISTORIA","REDU\u00c7\u00c3O DE CH",""],["21","4710","JOSE CLAUDINEI DA SILVA","870.297.234-49","15/06/2011","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I26:K26,\"<>\",I26:K26),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q26:R26,\"<>\",Q26:R26),\"\")","6\u00baE,F/7\u00baE,F/8\u00baF,G/9\u00baE,F","08 TURMAS","HISTORIA","","","","","","=IFERROR(SUMIF(Z26:AA26,\"<>\",Z26:AA26),\"\")","","","","=IFERROR(S26+AB26,IFERROR(S26,IFERROR(AB26,\"\")))","=IF(OR(L26=\"\",L26=0,AF26=\"\"),\"\",L26-AF26)","PROFESSOR","PROFESSOR","","FALTA","","GEOGRAFIA","","HISTORIA","",""],["22","97","IVONES DOS SANTOS ACACIO LIMA","031.836.064-02","20/07/1998","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I27:K27,\"<>\",I27:K27),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q27:R27,\"<>\",Q27:R27),\"\")","8\u00baA,B.C,D,E/6\u00baA,B,C","08 TURMAS","HISTORIA","","","","","","=IFERROR(SUMIF(Z27:AA27,\"<>\",Z27:AA27),\"\")","","","","=IFERROR(S27+AB27,IFERROR(S27,IFERROR(AB27,\"\")))","=IF(OR(L27=\"\",L27=0,AF27=\"\"),\"\",L27-AF27)","PROFESSOR","PROFESSOR","","FALTA","","HISTORIA","","HISTORIA","",""],["23","","EDUARDA HORTENCIA SANTOS SAMPAIO","103.437.524-50","02/02/2026","MAGIST\u00c9RIO","ATIVO","","20","","","=IFERROR(SUMIF(I28:K28,\"<>\",I28:K28),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q28:R28,\"<>\",Q28:R28),\"\")","6\u00baD,7\u00baC,D/9\u00baF/EJA VESP","05 TURMAS","HISTORIA/GEOGRAFIA","","","","","","=IFERROR(SUMIF(Z28:AA28,\"<>\",Z28:AA28),\"\")","","","","=IFERROR(S28+AB28,IFERROR(S28,IFERROR(AB28,\"\")))","=IF(OR(L28=\"\",L28=0,AF28=\"\"),\"\",L28-AF28)","PROFESSOR","PROFESSOR","","","","","","HISTORIA/GEOGRAFIA","",""],["24","","EDUARDA HORTENCIA SANTOS SAMPAIO","103.437.524-50","","MAGIST\u00c9RIO","ATIVO","","","","","=IFERROR(SUMIF(I29:K29,\"<>\",I29:K29),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q29:R29,\"<>\",Q29:R29),\"\")","9\u00baD/EJA VESP","02 TURMAS","ARTE","","","","","","=IFERROR(SUMIF(Z29:AA29,\"<>\",Z29:AA29),\"\")","","","","=IFERROR(S29+AB29,IFERROR(S29,IFERROR(AB29,\"\")))","=IF(OR(L29=\"\",L29=0,AF29=\"\"),\"\",L29-AF29)","PROFESSOR","PROFESSOR","","","","","","ARTE","",""],["25","","EDUARDA HORTENCIA SANTOS SAMPAIO","103.437.524-50","","MAGIST\u00c9RIO","ATIVO","","","","","=IFERROR(SUMIF(I30:K30,\"<>\",I30:K30),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q30:R30,\"<>\",Q30:R30),\"\")","9\u00baD/EJA VESP","02 TURMAS","ENSINO RELGIOSO","","","","","","=IFERROR(SUMIF(Z30:AA30,\"<>\",Z30:AA30),\"\")","","","","=IFERROR(S30+AB30,IFERROR(S30,IFERROR(AB30,\"\")))","=IF(OR(L30=\"\",L30=0,AF30=\"\"),\"\",L30-AF30)","PROFESSOR","PROFESSOR","","","","","","ENSINO RELGIOSO","",""],["26","166/","JOSE ELIAS PEREIRA","871.324.784-00","20/07/1998","MAGIST\u00c9RIO","ATIVO","EFETIVO","50","","","=IFERROR(SUMIF(I31:K31,\"<>\",I31:K31),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q31:R31,\"<>\",Q31:R31),\"\")","6\u00baA,B,C,D/8\u00baA,B,C,D,E/6\u00baE,F/7\u00baE,F,/8\u00baF,G/9\u00baE","16 TURMAS","GEOGRAFIA","","","","","","=IFERROR(SUMIF(Z31:AA31,\"<>\",Z31:AA31),\"\")","","","","=IFERROR(S31+AB31,IFERROR(S31,IFERROR(AB31,\"\")))","=IF(OR(L31=\"\",L31=0,AF31=\"\"),\"\",L31-AF31)","PROFESSOR","PROFESSOR","","III-I","","GEOGRAFIA","","GEOGRAFIA","",""],["27","65","GILMAR DE JESUS SILVA","023.986.264-31","13/05/2002","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I32:K32,\"<>\",I32:K32),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q32:R32,\"<>\",Q32:R32),\"\")","7\u00baA,B,C,D/9\u00baA,B,C,D","08 TURMAS","GEOGRAFIA","","","","","","=IFERROR(SUMIF(Z32:AA32,\"<>\",Z32:AA32),\"\")","","","","=IFERROR(S32+AB32,IFERROR(S32,IFERROR(AB32,\"\")))","=IF(OR(L32=\"\",L32=0,AF32=\"\"),\"\",L32-AF32)","PROFESSOR","PROFESSOR","","III-H","","GEOGRAFIA/GESTAO ESCOLAR","","GEOGRAFIA","",""],["28","306","LEANE DO ESPIRITO SANTO","034.932.204-05","01/07/2008","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I33:K33,\"<>\",I33:K33),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q33:R33,\"<>\",Q33:R33),\"\")","6\u00baA,B,C,D/7\u00baA,B,C,D/8\u00baA,B,C,D,E/9\u00baA,B,C","16 TURMAS","ENS.RELIGIOSO","","","","","","=IFERROR(SUMIF(Z33:AA33,\"<>\",Z33:AA33),\"\")","","","","=IFERROR(S33+AB33,IFERROR(S33,IFERROR(AB33,\"\")))","=IF(OR(L33=\"\",L33=0,AF33=\"\"),\"\",L33-AF33)","PROFESSOR","PROFESSOR","","III-E","","HISTORIA","","ENS.RELIGIOSO","",""],["29","","AMANDA LARISSA SANTOS","125.949.214-16","02/02/2026","MAGIST\u00c9RIO","ATIVO","CONTRATO","30","","","=IFERROR(SUMIF(I34:K34,\"<>\",I34:K34),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q34:R34,\"<>\",Q34:R34),\"\")","6\u00baA,B,C,D/7\u00baA,B,C,D/8\u00baA,B,C,D,E,F/9\u00baA,B,C,D/ 6\u00baE,F/7\u00baE,F/8\u00baF,G/9\u00baE,F","08 TURMAS","ENS.RELIGIOSO","","","","","","=IFERROR(SUMIF(Z34:AA34,\"<>\",Z34:AA34),\"\")","","","","=IFERROR(S34+AB34,IFERROR(S34,IFERROR(AB34,\"\")))","=IF(OR(L34=\"\",L34=0,AF34=\"\"),\"\",L34-AF34)","PROFESSOR","PROFESSOR","","","","","","ENS.RELIGIOSO","COMPLETA NO REFOR\u00c7O",""],["30","168","JOSE ERONILDES DA SILVA","870.299.874-20","01/02/2012","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I35:K35,\"<>\",I35:K35),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q35:R35,\"<>\",Q35:R35),\"\")","6\u00baA,B,C,D/7\u00baA,B,C,D/8\u00baA,B,C,D,E/9\u00baA,B,C","16 TURMAS","ARTE","","","","","","=IFERROR(SUMIF(Z35:AA35,\"<>\",Z35:AA35),\"\")","","","","=IFERROR(S35+AB35,IFERROR(S35,IFERROR(AB35,\"\")))","=IF(OR(L35=\"\",L35=0,AF35=\"\"),\"\",L35-AF35)","PROFESSOR","PROFESSOR","","III-F","","PEDAGOGIA/MET.INTROD. EDUCA\u00c7\u00c3O","","ARTE","",""],["31","","JOBSON ALVES DA SILVA","114.714.544-01","","MAGIST\u00c9RIO","ATIVO","CONTRATO","20","","","=IFERROR(SUMIF(I36:K36,\"<>\",I36:K36),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q36:R36,\"<>\",Q36:R36),\"\")","6\u00baE,F/7\u00baE,F/8\u00baF,G/9\u00baE,F","08 TURMAS","ARTE","","","","","","=IFERROR(SUMIF(Z36:AA36,\"<>\",Z36:AA36),\"\")","","","","=IFERROR(S36+AB36,IFERROR(S36,IFERROR(AB36,\"\")))","=IF(OR(L36=\"\",L36=0,AF36=\"\"),\"\",L36-AF36)","PROFESSOR","PROFESSOR","","","","","","ARTE","COMPLETA NO ATIVIDADE COM",""],["32","","DIMAS JOSE DA SILVA","137.080.324-97","","MAGIST\u00c9RIO","ATIVO","CONTRATO","25","","","=IFERROR(SUMIF(I37:K37,\"<>\",I37:K37),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q37:R37,\"<>\",Q37:R37),\"\")","8\u00baA,B,C,D,E/9\u00baA,B,C,D","10 TURMAS","EDUCA\u00c7\u00c3O FISICA","","","","","","=IFERROR(SUMIF(Z37:AA37,\"<>\",Z37:AA37),\"\")","","","","=IFERROR(S37+AB37,IFERROR(S37,IFERROR(AB37,\"\")))","=IF(OR(L37=\"\",L37=0,AF37=\"\"),\"\",L37-AF37)","PROFESSOR","PROFESSOR","","","","ENSINO MEDIO/CURSANDO ED.FISICA","","EDUCA\u00c7\u00c3O FISICA","CURSANDO ED. FISICA",""],["33","","MARCIO RIBEIRO DA SILVA","124.515.984-41","","MAGIST\u00c9RIO","ATIVO","CONTRATO","20","","","=IFERROR(SUMIF(I38:K38,\"<>\",I38:K38),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q38:R38,\"<>\",Q38:R38),\"\")","7\u00baA,B/8\u00baF,G/9\u00baE,F/EJA -TARD/NOT","16 TURMAS","EDUCA\u00c7\u00c3O FISICA","","","","","","=IFERROR(SUMIF(Z38:AA38,\"<>\",Z38:AA38),\"\")","","","","=IFERROR(S38+AB38,IFERROR(S38,IFERROR(AB38,\"\")))","=IF(OR(L38=\"\",L38=0,AF38=\"\"),\"\",L38-AF38)","PROFESSOR","PROFESSOR","","","","ENSINO M\u00c9DIO","","EDUCA\u00c7\u00c3O FISICA","",""],["34","","FLAVYA MARIA DA SILVA","097.167.949-90","","MAGIST\u00c9RIO","ATIVO","CONTRATO","25","","","=IFERROR(SUMIF(I39:K39,\"<>\",I39:K39),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q39:R39,\"<>\",Q39:R39),\"\")","6\u00baA,B,C,D/7\u00baC,D/6\u00baE,F/7\u00baE,F","10 TURMAS","EDUCA\u00c7\u00c3O FISICA","","","","","","=IFERROR(SUMIF(Z39:AA39,\"<>\",Z39:AA39),\"\")","","","","=IFERROR(S39+AB39,IFERROR(S39,IFERROR(AB39,\"\")))","=IF(OR(L39=\"\",L39=0,AF39=\"\"),\"\",L39-AF39)","PROFESSOR","PROFESSOR","","","","","","EDUCA\u00c7\u00c3O FISICA","",""],["35","","CLAUDINEIDE PIMENTA SANTOS","062.258.944-03","","MAGIST\u00c9RIO","ATIVO","CONTRATO","20","","","=IFERROR(SUMIF(I40:K40,\"<>\",I40:K40),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q40:R40,\"<>\",Q40:R40),\"\")","EJA I","","COMP.CURR","","","","","","=IFERROR(SUMIF(Z40:AA40,\"<>\",Z40:AA40),\"\")","","","","=IFERROR(S40+AB40,IFERROR(S40,IFERROR(AB40,\"\")))","=IF(OR(L40=\"\",L40=0,AF40=\"\"),\"\",L40-AF40)","PROFESSOR","PROFESSOR","","","","","","COMP.CURR","",""],["36","120","RENATO OLIVEIRA","871.315.014-68","","MAGIST\u00c9RIO","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I41:K41,\"<>\",I41:K41),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q41:R41,\"<>\",Q41:R41),\"\")","EJA-NOT","01 TURMA","MATEMATICA/CIENCIAS/ARTE /ENS.REL","","","","","","=IFERROR(SUMIF(Z41:AA41,\"<>\",Z41:AA41),\"\")","","","","=IFERROR(S41+AB41,IFERROR(S41,IFERROR(AB41,\"\")))","=IF(OR(L41=\"\",L41=0,AF41=\"\"),\"\",L41-AF41)","PROFESSOR","PROFESSOR","","FALTA","","MATEMATICA","","MATEMATICA/CIENCIAS/ARTE /ENS.REL","COMPL. MONICA ROSA",""],["37","","MARIA GEANE COSTA DUARTE","036.723.204-61","02/02/2026","ATIV. COMPLEMENTAR","ATIVO","CONTRATO","25","","","=IFERROR(SUMIF(I42:K42,\"<>\",I42:K42),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q42:R42,\"<>\",Q42:R42),\"\")","6\u00baC.D /7\u00baA,B,C,D/8\u00baE/ 9\u00baA,B,C,D","11 TURMAS","LET.COM","","","","","","=IFERROR(SUMIF(Z42:AA42,\"<>\",Z42:AA42),\"\")","","","","=IFERROR(S42+AB42,IFERROR(S42,IFERROR(AB42,\"\")))","=IF(OR(L42=\"\",L42=0,AF42=\"\"),\"\",L42-AF42)","PROFESSOR","PROFESSOR","","","","PEDAGOGIA","","LET.COM","",""],["38","","ROBSON FIRMINO DOS ANTOS","408.364.604-72","02/04/2007","ATIV. COMPLEMENTAR","ATIVO","EFETIVO","25","","","=IFERROR(SUMIF(I43:K43,\"<>\",I43:K43),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q43:R43,\"<>\",Q43:R43),\"\")","6\u00baE,F/7\u00baE,F/8\u00baF,G/9\u00baE,F","04TURMAS","LET.COM","","","","","","=IFERROR(SUMIF(Z43:AA43,\"<>\",Z43:AA43),\"\")","","","","=IFERROR(S43+AB43,IFERROR(S43,IFERROR(AB43,\"\")))","=IF(OR(L43=\"\",L43=0,AF43=\"\"),\"\",L43-AF43)","PROFESSOR","PROFESSOR","","III-F","","LETRAS","","LET.COM","",""],["39","","JOSE EDSON DA SILVA","124.564.228-64","11/03/2026","ATIV. COMPLEMENTAR","ATIVO","CONTRATO","25","","","=IFERROR(SUMIF(I44:K44,\"<>\",I44:K44),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q44:R44,\"<>\",Q44:R44),\"\")","6\u00baA,B,C,D/7\u00baA,B,C,D","08 TURMAS","LET. MAT","","","","","","=IFERROR(SUMIF(Z44:AA44,\"<>\",Z44:AA44),\"\")","","","","=IFERROR(S44+AB44,IFERROR(S44,IFERROR(AB44,\"\")))","=IF(OR(L44=\"\",L44=0,AF44=\"\"),\"\",L44-AF44)","PROFESSOR","PROFESSOR","","","","MATEMATICA","","LET. MAT","",""],["40","","MAGDALA SAMILLA FRANCISCO DA SILVA","06.515.184-58","02/02/2026","ATIV. COMPLEMENTAR","ATIVO","CONTRATO","20","","","=IFERROR(SUMIF(I45:K45,\"<>\",I45:K45),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q45:R45,\"<>\",Q45:R45),\"\")","8\u00baE/6\u00baE,F","03 TURMAS","","","","","","","=IFERROR(SUMIF(Z45:AA45,\"<>\",Z45:AA45),\"\")","","","","=IFERROR(S45+AB45,IFERROR(S45,IFERROR(AB45,\"\")))","=IF(OR(L45=\"\",L45=0,AF45=\"\"),\"\",L45-AF45)","PROFESSOR","PROFESSOR","","","","MATEMATICA","","","COMPLETA COM 40H NA AGRICOLA",""],["41","","GUILHERME HENRIQUE SILVA CHAGAS","077.912.844-30","02/02/2026","ATIV. COMPLEMENTAR","ATIVO","CONTRATO","30","","","=IFERROR(SUMIF(I46:K46,\"<>\",I46:K46),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q46:R46,\"<>\",Q46:R46),\"\")","7\u00baA,B/8\u00baA,B,C,D,E/9\u00baA,B,C,D/EJA","12 TURMAS","LET.MAT","","","","","","=IFERROR(SUMIF(Z46:AA46,\"<>\",Z46:AA46),\"\")","","","","=IFERROR(S46+AB46,IFERROR(S46,IFERROR(AB46,\"\")))","=IF(OR(L46=\"\",L46=0,AF46=\"\"),\"\",L46-AF46)","PROFESSOR","PROFESSOR","","","","","","LET.MAT","COMPLETA COM 4H REFOR\u00c7O NO INTEGRAL",""],["42","","INGRID FERNANDA SANTOS","41515865800","02/02/2026","ATIV. COMPLEMENTAR","ATIVO","CONTRATO","20","","","=IFERROR(SUMIF(I47:K47,\"<>\",I47:K47),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q47:R47,\"<>\",Q47:R47),\"\")","6\u00baE,F/7\u00baE,F/8\u00baF,G/9\u00baE,F","08 TURMAS","LET.MAT","","","","","","=IFERROR(SUMIF(Z47:AA47,\"<>\",Z47:AA47),\"\")","","","","=IFERROR(S47+AB47,IFERROR(S47,IFERROR(AB47,\"\")))","=IF(OR(L47=\"\",L47=0,AF47=\"\"),\"\",L47-AF47)","PROFESSOR","PROFESSOR","","","","","","LET.MAT","",""],["43","","JOBSON ALVES DA SILVA","114.714.544-01","02/02/2026","ATIV. COMPLEMENTAR","ATIVO","CONTRATO","","","","=IFERROR(SUMIF(I48:K48,\"<>\",I48:K48),\"\")","ESCOLA DIVINA PASTORA","","","","","","=IFERROR(SUMIF(Q48:R48,\"<>\",Q48:R48),\"\")","6\u00baE,F/7\u00baE,F/8\u00baF,G/9\u00baE,F","17 TURMAS","CULTURA E LAZER","","","","","","=IFERROR(SUMIF(Z48:AA48,\"<>\",Z48:AA48),\"\")","","","","=IFERROR(S48+AB48,IFERROR(S48,IFERROR(AB48,\"\")))","=IF(OR(L48=\"\",L48=0,AF48=\"\"),\"\",L48-AF48)","PROFESSOR","PROFESSOR","","","","","","CULTURA E LAZER","",""]],"adm_filters":{"CATEGORIA":["APOIO ADMINISTRATIVO","PROF. APOIO AEE","QUADRO DIRETIVO"],"SITUA\u00c7\u00c3O":["ATIVO"],"V\u00cdNCULO":["CONTRATO","EFETIVO"],"ESCOLA":["CASINHA FELIZ","ESCOLA DIVINA PASTORA"],"ETAPA":[],"CARGO":["ASSIST.ADM.EDUC","AUX.SERV.EDUC","PROF.DE APOIO ESCOLAR/AEE","PROFESSOR","VIGILANTE ESCOLAR"],"FUN\u00c7\u00c3O":["AFASTADO","ASSIST. ADM.EDUC","ASSIST.ADM.EDUC.","AUSEG","BIBLIOTECA","CHEFE DE DISCIPLINA","COORDENA\u00c7\u00c3O","COORDENA\u00c7\u00c3O +ARTICULA\u00c7\u00c3O","COORDENA\u00c7\u00c3O EJA","COORDENA\u00c7\u00c3O PEDAGOGICA","CUIDADOR","DIRE\u00c7AO","LAB..INF","MERENDEIRA","PERMUTA","PORTEIRO","PROFESSOR","PROFESSOR/AEE","READAPTADA","SEC.ESCOLAR","VICE DIRETOR"],"HABILITA\u00c7\u00c3O":["ANALISE DE SISTEMA","CIENCIAS BIO/BIOQ. MOLECULAR","CIENCIAS BIO/ED.AMB.SUST","CIENCIAS BIOLOGICA","DIREITO/GEST.ED/DIREITO ED.","ENS. FUND. INCOMPLETO","ENSINO FUNDAMENTAL","ENSINO M\u00c9DIO","EST.SOCIAIS","GEOGRAFIA","HISTORIA","HISTORIA/MET.ENS.LINGUAGEM","HISTORIA/PSICOP.","LETRAS","LETRAS/GESTAO ESCOALR","MAGISTERIO","MATEMATICA","MATEMATICA/EDUCA\u00c7\u00c3O MATEM\u00c1TICA","MATEMATICA/MET.ENS.MAT","PEDAGOGIA","PEDAGOGIA/ GESTAO ESCOLAR","PEDAGOGIA/ED.INCLUSIVA","PEDAGOGIA/ESP.","PEDAGOGIAN/NEUROPSICOP."]},"mag_filters":{"CATEGORIA":["ATIV. COMPLEMENTAR","MAGIST\u00c9RIO"],"SITUA\u00c7\u00c3O":["ATIVO","INATIVO"],"V\u00cdNCULO":["CONTRATO","EFETIVO"],"ESCOLA":["CENTRO CASINHA FELIZ","ESCOLA DIVINA PASTORA","ESCOLA MARIA DO CARMO COSTA","ESCOLA MONICA ROSA","ESCOLA SANTO ANT\u00d4NIO"],"ETAPA":["EDUCA\u00c7\u00c3O INFANTIL","ENSINO FUNDAMENTAL"],"S\u00c9RIE":["ANOS FINAIS","ANOS INICIAIS","CRECHE","EJA"],"DISCIPLINA":["ARTE","CIENCIAS","COMP.CURR","CULTURA E LAZER","EDUCA\u00c7\u00c3O FISICA","ENS.RELIGIOSO","ENSINO RELGIOSO","GEOGRAFIA","HISTORIA","HISTORIA/GEOGRAFIA","INGLES","LET. MAT","LET.COM","LET.MAT","LETRAMENTO MATEMATICA","LING.PORTUGUESA","LING.PORTUGUESA/LETRAMENTO","MATEMATICA","MATEMATICA/CIENCIAS/ARTE /ENS.REL"],"CARGO":["PROFESSOR"],"FUN\u00c7\u00c3O":["PROFESSOR"],"HABILITA\u00c7\u00c3O":["CIENCIAS BIOLOGICA","ENSINO MEDIO/CURSANDO ED.FISICA","ENSINO M\u00c9DIO","GEOGRAFIA","GEOGRAFIA/GESTAO ESCOLAR","HISTORIA","HISTORIA/Met.Hist e Geog","LETRAS","LETRAS/INGLES","LETRAS/PSICOP.","MATEMATICA","MATEMATICA/MET.ENS.MAT.","PEDAGOGIA","PEDAGOGIA/MET.INTROD. EDUCA\u00c7\u00c3O","QUIMICA"]}};
+// ══ CONFIGURAÇÃO DE ACESSO ══
+// Adicione os e-mails autorizados abaixo.
+// Se a lista ficar vazia, qualquer conta Google consegue entrar (modo teste).
+const AUTHORIZED_EMAILS = [
+  // "rh@gmail.com",
+  // "diretor@escola.gov.br",
+];
+
+// E-mails que veem CPF e contato sem máscara
+const ADMIN_EMAILS = [
+  // "rh@gmail.com",
+];
+
+// ══ ESTADO ══
+let currentUser = null, isAdmin = false;
+let state = { tab: 'adm', filters: {}, sortCol: -1, sortDir: 1 };
+
+// ══ AUTENTICAÇÃO GOOGLE ══
+function handleCredential(response) {
+  const p = parseJwt(response.credential);
+  if (AUTHORIZED_EMAILS.length > 0 && !AUTHORIZED_EMAILS.includes(p.email)) {
+    document.getElementById('LE').classList.add('show');
+    return;
+  }
+  currentUser = { email: p.email, name: p.name, picture: p.picture, given: p.given_name };
+  isAdmin = ADMIN_EMAILS.includes(p.email);
+  const av = document.getElementById('UA');
+  if (p.picture) { av.innerHTML = '<img src="' + p.picture + '" alt="">'; }
+  else { const i = p.name.split(' '); av.textContent = (i[0][0] + (i[i.length-1][0] || '')).toUpperCase(); }
+  document.getElementById('UN').textContent = p.given_name || p.email;
+  document.getElementById('LS').classList.add('hidden');
+  document.getElementById('APP').classList.remove('hidden');
+  render();
+  showToast('Bem-vindo(a), ' + (p.given_name || p.email.split('@')[0]) + '!');
+}
+
+function parseJwt(t) {
+  const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+  return JSON.parse(decodeURIComponent(atob(b).split('').map(c =>
+    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+}
+
+function confirmLogout() {
+  if (confirm('Deseja sair do sistema?')) {
+    currentUser = null;
+    document.getElementById('APP').classList.add('hidden');
+    document.getElementById('LS').classList.remove('hidden');
+    document.getElementById('LE').classList.remove('show');
+    google.accounts.id.disableAutoSelect();
+  }
+}
+
+// ══ MAPEAMENTO DE COLUNAS E FILTROS ══
+const ADM_FILTERS = [
+  { key: 'search', label: 'Buscar servidor', col: 2, type: 'text' },
+  { key: 'escola', label: 'Escola', col: 12, type: 'select', optKey: 'ESCOLA' },
+  { key: 'categoria', label: 'Categoria', col: 5, type: 'select', optKey: 'CATEGORIA' },
+  { key: 'situacao', label: 'Situação', col: 6, type: 'select', optKey: 'SITUAÇÃO' },
+  { key: 'vinculo', label: 'Vínculo', col: 7, type: 'select', optKey: 'VÍNCULO' },
+  { key: 'cargo', label: 'Cargo', col: 22, type: 'select', optKey: 'CARGO' },
+  { key: 'funcao', label: 'Função', col: 23, type: 'select', optKey: 'FUNÇÃO' },
+  { key: 'habilitacao', label: 'Habilitação', col: 25, type: 'select', optKey: 'HABILITAÇÃO' },
+];
+const MAG_FILTERS = [
+  { key: 'search', label: 'Buscar servidor', col: 2, type: 'text' },
+  { key: 'escola', label: 'Escola', col: 12, type: 'select', optKey: 'ESCOLA' },
+  { key: 'categoria', label: 'Categoria', col: 5, type: 'select', optKey: 'CATEGORIA' },
+  { key: 'situacao', label: 'Situação', col: 6, type: 'select', optKey: 'SITUAÇÃO' },
+  { key: 'vinculo', label: 'Vínculo', col: 7, type: 'select', optKey: 'VÍNCULO' },
+  { key: 'disciplina', label: 'Disciplina', col: 21, type: 'select', optKey: 'DISCIPLINA' },
+  { key: 'etapa', label: 'Etapa', col: 13, type: 'select', optKey: 'ETAPA' },
+  { key: 'cargo', label: 'Cargo', col: 33, type: 'select', optKey: 'CARGO' },
+  { key: 'habilitacao', label: 'Habilitação', col: 38, type: 'select', optKey: 'HABILITAÇÃO' },
+];
+const ADM_COLS = [
+  { idx: 1, label: 'Matrícula', w: '80px' },
+  { idx: 2, label: 'Nome', w: '200px' },
+  { idx: 3, label: 'CPF', w: '120px', cpf: true },
+  { idx: 5, label: 'Categoria', w: '120px', badge: true, bf: 'categoria' },
+  { idx: 6, label: 'Situação', w: '90px', badge: true, bf: 'situacao' },
+  { idx: 7, label: 'Vínculo', w: '90px', badge: true, bf: 'vinculo' },
+  { idx: 12, label: 'Escola', w: '180px' },
+  { idx: 22, label: 'Cargo', w: '140px' },
+  { idx: 11, label: 'CH Total', w: '80px', align: 'right', mono: true },
+  { idx: 21, label: 'Saldo CH', w: '80px', align: 'right', saldo: true },
+];
+const MAG_COLS = [
+  { idx: 1, label: 'Matrícula', w: '80px' },
+  { idx: 2, label: 'Nome', w: '200px' },
+  { idx: 3, label: 'CPF', w: '120px', cpf: true },
+  { idx: 5, label: 'Categoria', w: '110px', badge: true, bf: 'categoria' },
+  { idx: 6, label: 'Situação', w: '90px', badge: true, bf: 'situacao' },
+  { idx: 7, label: 'Vínculo', w: '90px', badge: true, bf: 'vinculo' },
+  { idx: 12, label: 'Escola', w: '180px' },
+  { idx: 21, label: 'Disciplina', w: '130px' },
+  { idx: 11, label: 'CH Total', w: '80px', align: 'right', mono: true },
+  { idx: 32, label: 'Saldo CH', w: '80px', align: 'right', saldo: true },
+];
+
+const getData = () => state.tab === 'adm' ? DB.adm_data : DB.mag_data;
+const getHeaders = () => state.tab === 'adm' ? DB.adm_headers : DB.mag_headers;
+const getFilters = () => state.tab === 'adm' ? ADM_FILTERS : MAG_FILTERS;
+const getCols = () => state.tab === 'adm' ? ADM_COLS : MAG_COLS;
+const getOpts = () => state.tab === 'adm' ? DB.adm_filters : DB.mag_filters;
+
+function maskCPF(v) {
+  if (!v) return '—';
+  if (isAdmin) return v;
+  return '***.***.***-**';
+}
+function maskContact(v) {
+  if (!v) return '—';
+  if (isAdmin) return v;
+  return '••••••••••';
+}
+function badgeClass(type, val) {
+  if (!val) return 'bd3';
+  const v = val.toUpperCase();
+  if (type === 'situacao') return v === 'ATIVO' ? 'ba' : 'bi';
+  if (type === 'vinculo') return v === 'EFETIVO' ? 'be' : 'bc';
+  if (type === 'categoria') return (v.includes('MAGIST')) ? 'bm' : 'bd2';
+  return 'bd3';
+}
+
+function getFiltered() {
+  let data = getData().slice();
+  const f = state.filters;
+  for (const fd of getFilters()) {
+    const val = f[fd.key];
+    if (!val) continue;
+    if (fd.key === 'search') { const q = val.toLowerCase(); data = data.filter(r => r[2].toLowerCase().includes(q)); }
+    else { data = data.filter(r => r[fd.col] === val); }
+  }
+  if (state.sortCol >= 0) {
+    data.sort((a, b) => {
+      const av = a[state.sortCol] || '', bv = b[state.sortCol] || '';
+      const n = parseFloat(av), m = parseFloat(bv);
+      if (!isNaN(n) && !isNaN(m)) return (n - m) * state.sortDir;
+      return av.localeCompare(bv, 'pt') * state.sortDir;
+    });
+  }
+  return data;
+}
+
+// ══ RENDER ══
+function render() {
+  if (!currentUser) return;
+  const filtered = getFiltered();
+  const label = state.tab === 'adm' ? 'Pessoal Administrativo' : 'Magistério';
+  const adminTag = isAdmin
+    ? ' &nbsp;·&nbsp; <span style="color:#065F46;background:#D1FAE5;padding:1px 8px;border-radius:12px;font-size:11px">RH — acesso completo</span>'
+    : '';
+  const banner = '<div class="rb">🔒 Somente leitura — <strong>' + currentUser.email + '</strong>' + adminTag + '</div>';
+
+  const total = getData().length;
+  const filt = filtered;
+  const ativos = filt.filter(r => r[6] === 'ATIVO').length;
+  const efetivos = filt.filter(r => r[7] === 'EFETIVO').length;
+  const contratos = filt.filter(r => r[7] === 'CONTRATO').length;
+  const stats = '<div class="stbar">'
+    + '<div class="st"><div class="stv">' + total + '</div><div class="stl">Total cadastrado</div></div>'
+    + '<div class="stsp"></div>'
+    + '<div class="st"><div class="stv" style="color:#10B981">' + ativos + '</div><div class="stl">Ativos</div></div>'
+    + '<div class="stsp"></div>'
+    + '<div class="st"><div class="stv" style="color:#1E40AF">' + efetivos + '</div><div class="stl">Efetivos</div></div>'
+    + '<div class="stsp"></div>'
+    + '<div class="st"><div class="stv" style="color:#92400E">' + contratos + '</div><div class="stl">Contratos</div></div>'
+    + '<div class="stsp"></div>'
+    + '<div class="st"><div class="stv">' + filt.length + '</div><div class="stl">Exibindo</div></div>'
+    + '</div>';
+
+  // filters bar
+  const fDefs = getFilters(), filterOpts = getOpts(), f = state.filters;
+  const hasF = Object.values(f).some(v => v && v !== '');
+  let fb = '<div class="fb">';
+  for (const fd of fDefs) {
+    if (fd.type === 'text') {
+      fb += '<div class="fg sg"><label>' + fd.label + '</label>'
+        + '<input type="text" placeholder="Nome do servidor..." value="' + (f[fd.key] || '') + '" oninput="setFilter(\'' + fd.key + '\',this.value)"></div>';
+    } else {
+      const opts = filterOpts[fd.optKey] || [], sel = f[fd.key] || '';
+      fb += '<div class="fg"><label>' + fd.label + '</label><select onchange="setFilter(\'' + fd.key + '\',this.value)">'
+        + '<option value="">Todos</option>'
+        + opts.map(o => '<option value="' + o + '"' + (o === sel ? ' selected' : '') + '>' + o + '</option>').join('')
+        + '</select></div>';
+    }
+  }
+  if (hasF) fb += '<button class="cf" onclick="clearFilters()">✕ Limpar filtros</button>';
+  fb += '</div>';
+
+  // table
+  const cols = getCols();
+  let thead = '<thead><tr><th style="width:42px">#</th>';
+  cols.forEach(c => {
+    const sc = state.sortCol === c.idx ? (state.sortDir === 1 ? ' sa' : ' sd') : '';
+    thead += '<th class="' + sc + '" style="min-width:' + c.w + '" onclick="sortBy(' + c.idx + ')">'
+      + c.label + (c.cpf && !isAdmin ? ' 🔒' : '') + '</th>';
+  });
+  thead += '</tr></thead>';
+
+  let tbody = '<tbody>';
+  if (!filtered.length) {
+    tbody += '<tr><td colspan="' + (cols.length + 1) + '"><div class="empty"><p>Nenhum resultado encontrado</p><span>Ajuste os filtros acima</span></div></td></tr>';
+  } else {
+    filtered.forEach((row, i) => {
+      const oi = getData().indexOf(row);
+      tbody += '<tr onclick="openDetail(' + oi + ')"><td>' + (i + 1) + '</td>';
+      cols.forEach(c => {
+        const val = row[c.idx] || ''; let cell = '';
+        if (c.cpf) {
+          cell = '<span class="cpfm">' + maskCPF(val) + '</span>';
+        } else if (c.saldo) {
+          const n = parseFloat(val);
+          if (!isNaN(n) && n > 0) cell = '<span class="sp">+' + n + '</span>';
+          else if (!isNaN(n) && n < 0) cell = '<span class="sn">' + n + '</span>';
+          else if (!isNaN(n)) cell = '<span style="color:#3B82F6;font-family:var(--mn);font-weight:600">0</span>';
+          else cell = '<span style="color:#9CA3AF">—</span>';
+        } else if (c.badge) {
+          cell = val ? '<span class="badge ' + badgeClass(c.bf, val) + '">' + val + '</span>' : '<span style="color:#9CA3AF">—</span>';
+        } else if (c.mono) {
+          cell = val ? '<span style="font-family:var(--mn);font-size:12px">' + val + '</span>' : '<span style="color:#9CA3AF">—</span>';
+        } else {
+          cell = val || '<span style="color:#9CA3AF">—</span>';
+        }
+        tbody += '<td style="' + (c.align === 'right' ? 'text-align:right' : '') + '" title="' + val + '">' + cell + '</td>';
+      });
+      tbody += '</tr>';
+    });
+  }
+  tbody += '</tbody>';
+
+  document.getElementById('MC').innerHTML =
+    '<div class="tbar"><span class="ttl">' + label + '</span>'
+    + '<div class="tsep"></div>'
+    + '<span class="tres">' + filtered.length + ' / ' + getData().length + ' registros</span>'
+    + '<div class="tr"><button class="btn btn-sm" onclick="exportCSV()">⬇ CSV</button></div></div>'
+    + banner + stats + fb
+    + '<div class="tw"><table>' + thead + tbody + '</table></div>';
+
+  document.getElementById('topBadge').textContent = getData().length + ' servidores';
+  document.getElementById('cnt-adm').textContent = DB.adm_data.length;
+  document.getElementById('cnt-mag').textContent = DB.mag_data.length;
+  document.querySelectorAll('.si[id^=nav-]').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-' + state.tab).classList.add('active');
+}
+
+function setTab(t) { state.tab = t; state.filters = {}; state.sortCol = -1; render(); }
+function setFilter(k, v) { state.filters[k] = v; render(); }
+function clearFilters() { state.filters = {}; render(); }
+function sortBy(col) { state.sortCol === col ? state.sortDir *= -1 : (state.sortCol = col, state.sortDir = 1); render(); }
+
+// ══ PAINEL DETALHE ══
+function openDetail(idx) {
+  const row = getData()[idx]; if (!row) return;
+  const headers = getHeaders(), tab = state.tab;
+  const name = row[2] || '—', mat = row[1] || 'S/M';
+  const ini = name.split(' ').filter(Boolean);
+  document.getElementById('PAV').textContent = ((ini[0]?.[0] || '') + (ini[ini.length - 1]?.[0] || '')).toUpperCase();
+  document.getElementById('PNM').textContent = name;
+  document.getElementById('PSB').innerHTML = 'Matrícula: <strong>' + mat + '</strong> &nbsp;·&nbsp; ' + (tab === 'adm' ? 'Administrativo' : 'Magistério');
+
+  const SENS = tab === 'adm' ? [3, 28] : [3, 42];
+  const secs = tab === 'adm' ? [
+    { t: 'Identificação', f: [0, 1, 2, 3, 4] },
+    { t: 'Vínculo e CH', f: [5, 6, 7, 8, 9, 10, 11] },
+    { t: 'Lotação 1', f: [12, 13, 14, 15] },
+    { t: 'Lotação 2', f: [16, 17, 18, 19] },
+    { t: 'Saldo CH', f: [20, 21] },
+    { t: 'Dados Funcionais', f: [22, 23, 24, 25, 26] },
+    { t: 'Complementares', f: [27, 28] },
+  ] : [
+    { t: 'Identificação', f: [0, 1, 2, 3, 4] },
+    { t: 'Vínculo e CH', f: [5, 6, 7, 8, 9, 10, 11] },
+    { t: 'Lotação 1', f: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21] },
+    { t: 'Lotação 2', f: [22, 23, 24, 25, 26, 27, 28, 29, 30] },
+    { t: 'Carga Horária', f: [31, 32] },
+    { t: 'Dados Funcionais', f: [33, 34, 35, 36, 37, 38, 39, 40] },
+    { t: 'Complementares', f: [41, 42] },
+  ];
+
+  let html = '<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 14px;font-size:12px;color:#065F46;margin-bottom:16px">'
+    + '👁 Visualização somente leitura' + (isAdmin ? ' — acesso RH completo' : ' — CPF e contato protegidos pela LGPD') + '</div>';
+
+  for (const sec of secs) {
+    const vf = sec.f.filter(fi => headers[fi]); if (!vf.length) continue;
+    const hasVal = vf.some(fi => row[fi] && ('' + row[fi]).trim());
+    if (!hasVal && !['Identificação', 'Vínculo e CH', 'Dados Funcionais'].includes(sec.t)) continue;
+    html += '<div class="psec"><div class="pst">' + sec.t + '</div><div class="pg">';
+    for (const fi of vf) {
+      if (!headers[fi]) continue;
+      const raw = row[fi] || '';
+      const isSens = SENS.includes(fi);
+      let disp = raw, xc = '';
+      if (isSens && !isAdmin) {
+        disp = fi === 3 ? maskCPF(raw) : maskContact(raw);
+        xc = 'masked';
+      }
+      const isMono = [0, 1, 3, 8, 9, 10, 11, 15, 20, 21, 31, 32].includes(fi);
+      html += '<div class="pf"><label>' + headers[fi] + (isSens && !isAdmin ? ' 🔒' : '') + '</label>'
+        + '<div class="pfv ' + (isMono ? 'mono ' : '') + (!raw ? 'empty ' : '') + xc + '">' + (disp || 'não informado') + '</div></div>';
+    }
+    html += '</div></div>';
+  }
+  document.getElementById('PB').innerHTML = html;
+  document.getElementById('PO').classList.add('open');
+}
+
+function closePanel(e) { if (e.target === document.getElementById('PO')) closePanelDirect(); }
+function closePanelDirect() { document.getElementById('PO').classList.remove('open'); }
+
+// ══ EXPORTAR CSV ══
+function exportCSV() {
+  const filtered = getFiltered(), headers = getHeaders(), cols = getCols();
+  const ci = cols.map(c => c.idx);
+  const hr = ci.map(i => headers[i]).join(';');
+  const rows = filtered.map(r => ci.map(i => {
+    let v = r[i] || '';
+    if (i === 3 && !isAdmin) v = maskCPF(v);
+    if (((i === 28 && state.tab === 'adm') || (i === 42 && state.tab === 'mag')) && !isAdmin) v = maskContact(v);
+    return '"' + v.replace(/"/g, '""') + '"';
+  }).join(';'));
+  const csv = [hr, ...rows].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'servidores_' + state.tab + '_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click(); showToast('CSV exportado com sucesso');
+}
+
+// ══ ESTATÍSTICAS ══
+function showStats() {
+  const adm = DB.adm_data, mag = DB.mag_data, all = [...adm, ...mag];
+  const cb = (data, col) => {
+    const m = {}; data.forEach(r => { const v = r[col] || '—'; m[v] = (m[v] || 0) + 1; });
+    return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  };
+  const rt = e => e.map(([k, v]) => '<tr><td style="padding:5px 8px;font-size:12px">' + k + '</td><td style="padding:5px 8px;font-size:12px;font-family:var(--mn);font-weight:600;text-align:right">' + v + '</td></tr>').join('');
+  const h = '<div style="position:fixed;inset:0;background:rgba(10,20,40,.4);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px" id="SO" onclick="if(event.target===this)this.remove()">'
+    + '<div style="background:#fff;border-radius:12px;padding:24px;width:620px;max-height:80vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.15)">'
+    + '<div style="font-size:16px;font-weight:600;color:#0F2040;margin-bottom:20px">📊 Estatísticas — Banco de Servidores</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">'
+    + '<div style="background:#F8F9FB;border-radius:8px;padding:14px;text-align:center"><div style="font-size:24px;font-weight:700;color:#0F2040">' + (adm.length + mag.length) + '</div><div style="font-size:11px;color:#6B7280">Total</div></div>'
+    + '<div style="background:#F0FDF4;border-radius:8px;padding:14px;text-align:center"><div style="font-size:24px;font-weight:700;color:#065F46">' + all.filter(r => r[6] === 'ATIVO').length + '</div><div style="font-size:11px;color:#6B7280">Ativos</div></div>'
+    + '<div style="background:#EFF6FF;border-radius:8px;padding:14px;text-align:center"><div style="font-size:24px;font-weight:700;color:#1E40AF">' + all.filter(r => r[7] === 'EFETIVO').length + '</div><div style="font-size:11px;color:#6B7280">Efetivos</div></div>'
+    + '<div style="background:#FFFBEB;border-radius:8px;padding:14px;text-align:center"><div style="font-size:24px;font-weight:700;color:#92400E">' + all.filter(r => r[7] === 'CONTRATO').length + '</div><div style="font-size:11px;color:#6B7280">Contratos</div></div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">'
+    + '<div><div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:#9CA3AF;text-transform:uppercase;margin-bottom:10px">Top Escolas — Administrativo</div><table style="width:100%;border-collapse:collapse">' + rt(cb(adm, 12)) + '</table></div>'
+    + '<div><div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:#9CA3AF;text-transform:uppercase;margin-bottom:10px">Top Escolas — Magistério</div><table style="width:100%;border-collapse:collapse">' + rt(cb(mag, 12)) + '</table></div>'
+    + '</div>'
+    + '<div style="margin-top:18px;text-align:right"><button class="btn" onclick="document.getElementById(\'SO\').remove()">Fechar</button></div></div></div>';
+  document.body.insertAdjacentHTML('beforeend', h);
+}
+
+// ══ TOAST ══
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('PO').classList.remove('open');
+});
+
+</script>
+</body>
+</html>
